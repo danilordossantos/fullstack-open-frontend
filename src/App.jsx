@@ -13,6 +13,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -60,18 +61,28 @@ const App = () => {
   const handleCreateBlog = async event => {
     event.preventDefault()
 
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
+    try {
+      const newBlog = {
+        title: title,
+        author: author,
+        url: url
+      }
+      const savedBlog = await blogService.create(newBlog)
+      setBlogs(blog => blog.concat(savedBlog))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+      setSuccessMessage('Success')
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
+      setErrorMessage('Something is wrong')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
-    const savedBlog = await blogService.create(newBlog)
-    setBlogs(blog => blog.concat(savedBlog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-
-  }
+  }  
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -123,7 +134,7 @@ const App = () => {
             onChange={({ target }) => setUrl(target.value)} />
         </label>
       </div>
-      <button type="submit">create</button>
+      <button type="submit">blog</button>
     </form>
   )
 
@@ -131,6 +142,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification message={errorMessage} />
+      <Notification message={successMessage}/>
 
       {!user && loginForm()}
       {user && (
