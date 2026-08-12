@@ -1,0 +1,13 @@
+.password-field {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
