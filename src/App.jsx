@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,7 +16,6 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -84,7 +84,7 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     }
-  }  
+  }
 
   const blogForm = () => (
     <form onSubmit={handleCreateBlog}>
@@ -117,23 +117,15 @@ const App = () => {
   )
 
   const loginForm = () => {
-    const hideWhenVisible = {display: loginVisible ? 'none' : ''}
-    const showWhenVisible = {display: loginVisible ? '' : 'none'}
-
     return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm username={username}
+      <Togglable buttonLabel="login">
+        <LoginForm
+          username={username}
           password={password}
-          handleUsernameChange={({target}) => setUsername(target.value)}
-          handlePasswordChange={({target}) => setPassword(target.value)}
-          handleSubmit={handleLogin}/>
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin} />
+      </Togglable>
     )
   }
 
@@ -141,12 +133,12 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification message={errorMessage} />
-      <Notification message={successMessage}/>
+      <Notification message={successMessage} />
 
       {!user && loginForm()}
       {user && (
         <div>
-          <p>{user.name} logged in</p>          
+          <p>{user.name} logged in</p>
           {blogForm()}
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
