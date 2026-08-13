@@ -15,6 +15,7 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -115,17 +116,34 @@ const App = () => {
     </form>
   )
 
+  const loginForm = () => {
+    const hideWhenVisible = {display: loginVisible ? 'none' : ''}
+    const showWhenVisible = {display: loginVisible ? '' : 'none'}
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm username={username}
+          password={password}
+          handleUsernameChange={({target}) => setUsername(target.value)}
+          handlePasswordChange={({target}) => setPassword(target.value)}
+          handleSubmit={handleLogin}/>
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>blogs</h2>
       <Notification message={errorMessage} />
       <Notification message={successMessage}/>
 
-      {!user && <LoginForm username={username}
-      password={password}
-      handleUsernameChange={({target}) => setUsername(target.value)}
-      handlePasswordChange={({target}) => setPassword(target.value)}
-      handleSubmit={handleLogin}/>}
+      {!user && loginForm()}
       {user && (
         <div>
           <p>{user.name} logged in</p>          
