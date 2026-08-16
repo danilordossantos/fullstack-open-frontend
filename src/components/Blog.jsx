@@ -18,6 +18,7 @@ const Blog = ({ blog, handleLike }) => {
       </div>
       <div style={showWhenVisible}>
         <div>{blog.url}</div>
+        <div>{blog.user.name}</div>
         <div>likes {blog.likes}
           <button type="button" onClick={() => handleLike(blog)}>like</button>
         </div>
