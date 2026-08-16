@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -62,6 +62,7 @@ const App = () => {
 
     try {
       const savedBlog = await blogService.create(blogObject)
+      blogFormRef.current.toggleVisibility()
       setBlogs(blog => blog.concat(savedBlog))
       setSuccessMessage('Success')
       setTimeout(() => {
@@ -88,6 +89,8 @@ const App = () => {
     )
   }
 
+  const blogFormRef = useRef()
+
   return (
     <div>
       <h2>blogs</h2>
@@ -98,7 +101,7 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          {<Togglable buttonLabel="new blog"><BlogForm createBlog={handleCreateBlog} /></Togglable>}
+          {<Togglable buttonLabel="new blog" ref={blogFormRef}><BlogForm createBlog={handleCreateBlog} /></Togglable>}
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
