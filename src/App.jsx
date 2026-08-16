@@ -119,7 +119,7 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           {<Togglable buttonLabel="new blog" ref={blogFormRef}><BlogForm createBlog={handleCreateBlog} /></Togglable>}
-          {blogs.map(blog =>
+          {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
             <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
           )}
           <button type="button" onClick={handleLogout}>logout</button>
