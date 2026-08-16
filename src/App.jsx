@@ -76,6 +76,23 @@ const App = () => {
     }
   }
 
+  const handleLike = async blogObject => {
+    const blogAtualizado = {...blogObject, likes: blogObject.likes + 1, user: blogObject.user.id}
+    try {
+      const savedBlog = await blogService.update(blogObject.id, blogAtualizado)
+      setBlogs(blogs.map(blog => blogObject.id !== blog.id ? blog : savedBlog))
+      setSuccessMessage('Success')
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
+      setErrorMessage('Something is wrong')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   const loginForm = () => {
     return (
       <Togglable buttonLabel="login">
@@ -103,7 +120,7 @@ const App = () => {
           <p>{user.name} logged in</p>
           {<Togglable buttonLabel="new blog" ref={blogFormRef}><BlogForm createBlog={handleCreateBlog} /></Togglable>}
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
           )}
           <button type="button" onClick={handleLogout}>logout</button>
         </div>
