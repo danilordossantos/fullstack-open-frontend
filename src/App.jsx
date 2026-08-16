@@ -77,10 +77,26 @@ const App = () => {
   }
 
   const handleLike = async blogObject => {
-    const blogAtualizado = {...blogObject, likes: blogObject.likes + 1, user: blogObject.user.id}
+    const blogAtualizado = { ...blogObject, likes: blogObject.likes + 1, user: blogObject.user.id }
     try {
       const savedBlog = await blogService.update(blogObject.id, blogAtualizado)
       setBlogs(blogs.map(blog => blogObject.id !== blog.id ? blog : savedBlog))
+      setSuccessMessage('Success')
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
+      setErrorMessage('Something is wrong')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  const handleDelete = async blogObject => {
+    try {
+      await blogService.remove(blogObject.id)
+      setBlogs(blogs.filter(blog => blogObject.id !== blog.id))
       setSuccessMessage('Success')
       setTimeout(() => {
         setSuccessMessage(null)
@@ -120,7 +136,7 @@ const App = () => {
           <p>{user.name} logged in</p>
           {<Togglable buttonLabel="new blog" ref={blogFormRef}><BlogForm createBlog={handleCreateBlog} /></Togglable>}
           {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-            <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
+            <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user.id}/>
           )}
           <button type="button" onClick={handleLogout}>logout</button>
         </div>
