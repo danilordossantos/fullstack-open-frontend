@@ -13,12 +13,12 @@ const Blog = ({ blog, handleLike, id, handleDelete }) => {
   const isOwner = id === blog.user.id
 
   return (
-    <div>
+    <div className='blog'>
       {blog.title} {blog.author}
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showWhenVisible}>
+      <div className='togglableContent' style={showWhenVisible}>
         <div>{blog.url}</div>
         <div>{blog.user.name}</div>
         <div>likes {blog.likes}
