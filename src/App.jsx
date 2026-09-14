@@ -6,7 +6,8 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
-import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useNavigate, useMatch } from 'react-router-dom'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -119,6 +120,12 @@ const App = () => {
     padding: 5
   }
 
+  const match = useMatch('/blogs/:id')
+
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
+
   return (
     <div>
       <h2>blogs</h2>
@@ -132,9 +139,7 @@ const App = () => {
           <div>
             <p>{user.name} logged in</p>
             {<Togglable buttonLabel="new blog" ref={blogFormRef}><BlogForm createBlog={handleCreateBlog} /></Togglable>}
-            {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-              <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user.id} />
-            )}
+            <BlogList blogs={blogs}/>
             <button type="button" onClick={handleLogout}>logout</button>
           </div>
           : <Navigate replace to='/login' />} />
@@ -144,6 +149,12 @@ const App = () => {
             <LoginForm username={username} password={password} handleUsernameChange={({ target }) => setUsername(target.value)} handlePasswordChange={({ target }) => setPassword(target.value)} handleSubmit={handleLogin} />
           </div>
         } />
+
+        <Route path='/blogs/:id' element={
+          <div>
+            <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user?.id}/>
+          </div>
+        }/>
       </Routes>
     </div>
   )
