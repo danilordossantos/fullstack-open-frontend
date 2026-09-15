@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
-import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import { Routes, Route, Link, Navigate, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
@@ -67,12 +66,12 @@ const App = () => {
 
     try {
       const savedBlog = await blogService.create(blogObject)
-      blogFormRef.current.toggleVisibility()
       setBlogs(blog => blog.concat(savedBlog))
       setSuccessMessage('Success')
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
+      navigate('/')
     } catch {
       setErrorMessage('Something is wrong')
       setTimeout(() => {
@@ -114,8 +113,6 @@ const App = () => {
     }
   }
 
-  const blogFormRef = useRef()
-
   const padding = {
     padding: 5
   }
@@ -133,12 +130,12 @@ const App = () => {
       <Notification message={successMessage} />
       <Link style={padding} to='/'>home</Link>
       <Link style={padding} to='/login'>login</Link>
+      {user && <Link style={padding} to='/create'>new blog</Link>}
 
       <Routes>
         <Route path='/' element={ user ?
           <div>
             <p>{user.name} logged in</p>
-            {<Togglable buttonLabel="new blog" ref={blogFormRef}><BlogForm createBlog={handleCreateBlog} /></Togglable>}
             <BlogList blogs={blogs}/>
             <button type="button" onClick={handleLogout}>logout</button>
           </div>
@@ -153,6 +150,12 @@ const App = () => {
         <Route path='/blogs/:id' element={
           <div>
             <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user?.id}/>
+          </div>
+        }/>
+
+        <Route path='/create' element={
+          <div>
+            <BlogForm createBlog={handleCreateBlog} />
           </div>
         }/>
       </Routes>
