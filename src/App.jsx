@@ -129,7 +129,7 @@ const App = () => {
       <Notification message={errorMessage} />
       <Notification message={successMessage} />
       <Link style={padding} to='/'>home</Link>
-      <Link style={padding} to='/login'>login</Link>
+      {!user && <Link style={padding} to='/login'>login</Link>}
       {user && <Link style={padding} to='/create'>new blog</Link>}
 
       <Routes>
