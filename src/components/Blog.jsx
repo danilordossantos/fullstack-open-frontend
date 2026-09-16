@@ -3,7 +3,7 @@ const Blog = ({ blog, handleLike, id, handleDelete }) => {
   if (!blog) {
     return null
   }
-  const isOwner = id === blog.user.id
+  const isOwner = id && (id === blog.user.id)
 
   return (
     <div className='blog'>
@@ -11,7 +11,11 @@ const Blog = ({ blog, handleLike, id, handleDelete }) => {
       <div>{blog.url}</div>
       <div>{blog.user.name}</div>
       <div>likes {blog.likes}
-        <button type="button" onClick={() => handleLike(blog)}>like</button>
+        {
+          id && (
+            <button type="button" onClick={() => handleLike(blog)}>like</button>
+          )
+        }
         {
           isOwner && (
             <button type="button" onClick={() => {
