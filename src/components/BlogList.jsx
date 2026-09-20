@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
 
 const BlogList = ({ blogs }) => {
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
   return (
     <div>
       <h1>Blogs</h1>
       <ul>
-        {blogs.map(blog => (
-          <li key={blog.id}>
+        {sortedBlogs.map(blog => (
+          <li key={blog.id} className='blog'>
             <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
           </li>
         ))}
