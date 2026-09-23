@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { Routes, Route, Link, Navigate, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
+import { Container, Box } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -124,7 +125,7 @@ const App = () => {
     : null
 
   return (
-    <div>
+    <Container>
       <h2>blogs</h2>
       <Notification message={errorMessage} />
       <Notification message={successMessage} />
@@ -132,34 +133,36 @@ const App = () => {
       {!user && <Link style={padding} to='/login'>login</Link>}
       {user && <Link style={padding} to='/create'>new blog</Link>}
 
-      <Routes>
-        <Route path='/' element={user ?
-          <div>
-            <p>{user.name} logged in</p>
-            <BlogList blogs={blogs} />
-            <button type="button" onClick={handleLogout}>logout</button>
-          </div>
-          : <Navigate replace to='/login' />} />
+      <Box sx={{ mt: 2 }}>
+        <Routes>
+          <Route path='/' element={user ?
+            <div>
+              <p>{user.name} logged in</p>
+              <BlogList blogs={blogs} />
+              <button type="button" onClick={handleLogout}>logout</button>
+            </div>
+            : <Navigate replace to='/login' />} />
 
-        <Route path='/login' element={
-          <div>
-            <LoginForm username={username} password={password} handleUsernameChange={({ target }) => setUsername(target.value)} handlePasswordChange={({ target }) => setPassword(target.value)} handleSubmit={handleLogin} />
-          </div>
-        } />
+          <Route path='/login' element={
+            <div>
+              <LoginForm username={username} password={password} handleUsernameChange={({ target }) => setUsername(target.value)} handlePasswordChange={({ target }) => setPassword(target.value)} handleSubmit={handleLogin} />
+            </div>
+          } />
 
-        <Route path='/blogs/:id' element={
-          <div>
-            <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user?.id} />
-          </div>
-        } />
+          <Route path='/blogs/:id' element={
+            <div>
+              <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user?.id} />
+            </div>
+          } />
 
-        <Route path='/create' element={
-          <div>
-            <BlogForm createBlog={handleCreateBlog} />
-          </div>
-        } />
-      </Routes>
-    </div>
+          <Route path='/create' element={
+            <div>
+              <BlogForm createBlog={handleCreateBlog} />
+            </div>
+          } />
+        </Routes>
+      </Box>
+    </Container>
   )
 }
 
