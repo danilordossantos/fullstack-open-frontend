@@ -68,6 +68,15 @@ const App = () => {
     navigate('/login')
   }
 
+  const handleRequestError = (error) => {
+    if (error.response?.status === 401) {
+      notify('Session expired, please log in again', 'warning')
+      handleLogout()
+    } else {
+      notify('Something is wrong', 'error')
+    }
+  }
+
   const handleCreateBlog = async blogObject => {
 
     try {
@@ -75,8 +84,8 @@ const App = () => {
       setBlogs(blog => blog.concat(savedBlog))
       notify('Success', 'success')
       navigate('/')
-    } catch {
-      notify('Something is wrong', 'error')
+    } catch (error) {
+      handleRequestError(error)
     }
   }
 
@@ -86,8 +95,8 @@ const App = () => {
       const savedBlog = await blogService.update(blogObject.id, updatedBlog)
       setBlogs(blogs.map(blog => blogObject.id !== blog.id ? blog : savedBlog))
       notify('Success', 'success')
-    } catch {
-      notify('Something is wrong', 'error')
+    } catch (error) {
+      handleRequestError(error)
     }
   }
 
@@ -96,8 +105,8 @@ const App = () => {
       await blogService.remove(blogObject.id)
       setBlogs(blogs.filter(blog => blogObject.id !== blog.id))
       notify('Success', 'success')
-    } catch {
-      notify('Something is wrong', 'error')
+    } catch (error) {
+      handleRequestError(error)
     }
   }
 
