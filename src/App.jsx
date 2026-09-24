@@ -7,7 +7,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { Routes, Route, Link, Navigate, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
-import { Container, Box, AppBar, Toolbar, Button, Typography, CssBaseline } from '@mui/material'
+import { Container, Box, AppBar, Toolbar, Button, CssBaseline } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -54,6 +54,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      notify(`${user.name} logged in`, 'info')
       navigate('/')
     } catch {
       notify('Wrong credentials', 'error')
@@ -111,7 +112,7 @@ const App = () => {
   return (
     <>
       <CssBaseline />
-      <AppBar position='static'>
+      {!matchLogin && <AppBar position='static'>
         <Toolbar>
           {user && (
             <>
@@ -119,16 +120,11 @@ const App = () => {
               <Button color='inherit' component={Link} to="/create">new blog</Button>
             </>
           )}
-          {!user && !matchLogin && <Button color='inherit' component={Link} to="/login">login</Button>}
+          {!user && <Button color='inherit' component={Link} to="/login">login</Button>}
           <Box sx={{ flexGrow: 1 }} />
-          {user && (
-            <>
-              <Typography>{user.name} logged in</Typography>
-              <Button color='inherit' onClick={handleLogout}>logout</Button>
-            </>
-          )}
+          {user && <Button color='inherit' onClick={handleLogout}>logout</Button>}
         </Toolbar>
-      </AppBar>
+      </AppBar>}
 
       <Container>
         <Notification notification={notification} />
