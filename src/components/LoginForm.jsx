@@ -1,29 +1,36 @@
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
-import './LoginForm.css'
+import { TextField, Button, InputAdornment, IconButton, Stack } from '@mui/material'
 
 const LoginForm = ({ username, password, handleUsernameChange, handlePasswordChange, handleSubmit }) => {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-                    username
-          <input type="text" value={username} onChange={handleUsernameChange} />
-        </label>
-      </div>
-      <div>
-        <label>
-                    password
-          <div className='password-field'>
-            <input type={showPassword ? 'text' : 'password'} value={password} onChange={handlePasswordChange} />
-            <button type="button" className='password-toggle'
-              onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={16} strokeWidth={1.5}/> : <Eye size={16} strokeWidth={1.5}/>}</button>
-          </div>
-        </label>
-      </div>
-      <button type="submit">login</button>
+      <Stack spacing={2} sx={{ maxWidth: 400 }}>
+        <TextField
+          label="username"
+          value={username}
+          onChange={handleUsernameChange}
+        />
+        <TextField
+          label="password"
+          type={showPassword ? 'text' : 'password'} value={password}
+          onChange={handlePasswordChange}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          }}
+        />
+        <Button type="submit" variant="contained">login</Button>
+      </Stack>
     </form>
   )
 }

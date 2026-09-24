@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Button, Stack, Typography } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({
@@ -23,33 +24,26 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div>
-      <h2>Create a new blog</h2>
+      <Typography variant='h4' gutterBottom>Create a new blog</Typography>
       <form onSubmit={addBlog}>
-        <div>
-          <label>
-                        title
-            <input type="text"
-              value={newBlog.title}
-              onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })} />
-          </label>
-        </div>
-        <div>
-          <label>
-                        author
-            <input type="text"
-              value={newBlog.author}
-              onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })} />
-          </label>
-        </div>
-        <div>
-          <label>
-                        url
-            <input type="text"
-              value={newBlog.url}
-              onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })} />
-          </label>
-        </div>
-        <button type="submit">save</button>
+        <Stack spacing={2} sx={{ maxWidth: 400 }}>
+          <TextField
+            label="title"
+            value={newBlog.title}
+            onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
+          />
+          <TextField
+            label="author"
+            value={newBlog.author}
+            onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
+          />
+          <TextField
+            label="url"
+            value={newBlog.url}
+            onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
+          />
+          <Button type="submit" variant='contained'>save</Button>
+        </Stack>
       </form>
     </div>
   )

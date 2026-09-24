@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { Routes, Route, Link, Navigate, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
+import { Container, Box, AppBar, Toolbar, Button, Typography, CssBaseline } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -20,8 +21,7 @@ const App = () => {
     }
     return null
   })
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -34,6 +34,13 @@ const App = () => {
   }, [user])
 
   const navigate = useNavigate()
+
+  const notify = (text, type) => {
+    setNotification({ text, type })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+  }
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -49,10 +56,7 @@ const App = () => {
       setPassword('')
       navigate('/')
     } catch {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      notify('Wrong credentials', 'error')
     }
   }
 
@@ -60,6 +64,7 @@ const App = () => {
 
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
+    navigate('/login')
   }
 
   const handleCreateBlog = async blogObject => {
@@ -67,16 +72,10 @@ const App = () => {
     try {
       const savedBlog = await blogService.create(blogObject)
       setBlogs(blog => blog.concat(savedBlog))
-      setSuccessMessage('Success')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      notify('Success', 'success')
       navigate('/')
     } catch {
-      setErrorMessage('Something is wrong')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      notify('Something is wrong', 'error')
     }
   }
 
@@ -85,15 +84,9 @@ const App = () => {
     try {
       const savedBlog = await blogService.update(blogObject.id, updatedBlog)
       setBlogs(blogs.map(blog => blogObject.id !== blog.id ? blog : savedBlog))
-      setSuccessMessage('Success')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      notify('Success', 'success')
     } catch {
-      setErrorMessage('Something is wrong')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      notify('Something is wrong', 'error')
     }
   }
 
@@ -101,65 +94,74 @@ const App = () => {
     try {
       await blogService.remove(blogObject.id)
       setBlogs(blogs.filter(blog => blogObject.id !== blog.id))
-      setSuccessMessage('Success')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      notify('Success', 'success')
     } catch {
-      setErrorMessage('Something is wrong')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      notify('Something is wrong', 'error')
     }
   }
 
-  const padding = {
-    padding: 5
-  }
+  const matchBlog = useMatch('/blogs/:id')
 
-  const match = useMatch('/blogs/:id')
-
-  const blog = match
-    ? blogs.find(blog => blog.id === match.params.id)
+  const blog = matchBlog
+    ? blogs.find(blog => blog.id === matchBlog.params.id)
     : null
 
+  const matchLogin = useMatch('/login')
+
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification message={errorMessage} />
-      <Notification message={successMessage} />
-      <Link style={padding} to='/'>home</Link>
-      {!user && <Link style={padding} to='/login'>login</Link>}
-      {user && <Link style={padding} to='/create'>new blog</Link>}
+    <>
+      <CssBaseline />
+      <AppBar position='static'>
+        <Toolbar>
+          {user && (
+            <>
+              <Button color='inherit' component={Link} to="/">home</Button>
+              <Button color='inherit' component={Link} to="/create">new blog</Button>
+            </>
+          )}
+          {!user && !matchLogin && <Button color='inherit' component={Link} to="/login">login</Button>}
+          <Box sx={{ flexGrow: 1 }} />
+          {user && (
+            <>
+              <Typography>{user.name} logged in</Typography>
+              <Button color='inherit' onClick={handleLogout}>logout</Button>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
 
-      <Routes>
-        <Route path='/' element={user ?
-          <div>
-            <p>{user.name} logged in</p>
-            <BlogList blogs={blogs} />
-            <button type="button" onClick={handleLogout}>logout</button>
-          </div>
-          : <Navigate replace to='/login' />} />
+      <Container>
+        <Notification notification={notification} />
 
-        <Route path='/login' element={
-          <div>
-            <LoginForm username={username} password={password} handleUsernameChange={({ target }) => setUsername(target.value)} handlePasswordChange={({ target }) => setPassword(target.value)} handleSubmit={handleLogin} />
-          </div>
-        } />
+        <Box sx={{ mt: 2 }}>
+          <Routes>
+            <Route path='/' element={user ?
+              <div>
+                <BlogList blogs={blogs} />
+              </div>
+              : <Navigate replace to='/login' />} />
 
-        <Route path='/blogs/:id' element={
-          <div>
-            <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user?.id} />
-          </div>
-        } />
+            <Route path='/login' element={
+              <div>
+                <LoginForm username={username} password={password} handleUsernameChange={({ target }) => setUsername(target.value)} handlePasswordChange={({ target }) => setPassword(target.value)} handleSubmit={handleLogin} />
+              </div>
+            } />
 
-        <Route path='/create' element={
-          <div>
-            <BlogForm createBlog={handleCreateBlog} />
-          </div>
-        } />
-      </Routes>
-    </div>
+            <Route path='/blogs/:id' element={
+              <div>
+                <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} id={user?.id} />
+              </div>
+            } />
+
+            <Route path='/create' element={
+              <div>
+                <BlogForm createBlog={handleCreateBlog} />
+              </div>
+            } />
+          </Routes>
+        </Box>
+      </Container>
+    </>
   )
 }
 
