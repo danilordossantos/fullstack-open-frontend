@@ -64,6 +64,7 @@ const App = () => {
 
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
+    navigate('/login')
   }
 
   const handleCreateBlog = async blogObject => {
@@ -112,9 +113,13 @@ const App = () => {
       <CssBaseline />
       <AppBar position='static'>
         <Toolbar>
-          <Button color='inherit' component={Link} to="/">home</Button>
+          {user && (
+            <>
+              <Button color='inherit' component={Link} to="/">home</Button>
+              <Button color='inherit' component={Link} to="/create">new blog</Button>
+            </>
+          )}
           {!user && !matchLogin && <Button color='inherit' component={Link} to="/login">login</Button>}
-          {user && <Button color='inherit' component={Link} to="/create">new blog</Button>}
           <Box sx={{ flexGrow: 1 }} />
           {user && (
             <>

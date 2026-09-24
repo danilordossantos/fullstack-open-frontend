@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TextField, Button, Stack } from '@mui/material'
+import { TextField, Button, Stack, Typography } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({
@@ -24,7 +24,7 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div>
-      <h2>Create a new blog</h2>
+      <Typography variant='h4' gutterBottom>Create a new blog</Typography>
       <form onSubmit={addBlog}>
         <Stack spacing={2} sx={{ maxWidth: 400 }}>
           <TextField

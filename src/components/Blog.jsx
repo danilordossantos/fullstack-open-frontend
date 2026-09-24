@@ -1,3 +1,5 @@
+import { Typography, Card, CardContent, CardActions, Link, Button } from '@mui/material'
+
 const Blog = ({ blog, handleLike, id, handleDelete }) => {
 
   if (!blog) {
@@ -6,27 +8,30 @@ const Blog = ({ blog, handleLike, id, handleDelete }) => {
   const isOwner = id && (id === blog.user.id)
 
   return (
-    <div className='blog'>
-      {blog.title} {blog.author}
-      <div>{blog.url}</div>
-      <div>{blog.user.name}</div>
-      <div>likes {blog.likes}
+    <Card className='blog'>
+      <CardContent>
+        <Typography variant='h5'>{blog.title}</Typography> <Typography variant='subtitle1'>{blog.author}</Typography>
+        <Link href={blog.url} target='_blank' rel='noopener noreferrer'>{blog.url}</Link>
+        <Typography variant='body2'>added by {blog.user.name}</Typography>
+        <Typography variant='body2'>likes {blog.likes}</Typography>
+      </CardContent>
+      <CardActions>
         {
           id && (
-            <button type="button" onClick={() => handleLike(blog)}>like</button>
+            <Button onClick={() => handleLike(blog)}>like</Button>
           )
         }
         {
           isOwner && (
-            <button type="button" onClick={() => {
+            <Button onClick={() => {
               if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
                 handleDelete(blog)
               }
-            }}>remove</button>
+            }} color='error'>remove</Button>
           )
         }
-      </div>
-    </div>
+      </CardActions>
+    </Card>
   )
 }
 
